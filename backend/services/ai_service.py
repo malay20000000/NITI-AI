@@ -59,7 +59,7 @@ def evaluate_resume(resume_text: str, target_role: str) -> dict:
                 {"role": "system", "content": "You output only structured JSON."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3
+            temperature=0.0
         )
         content = response.choices[0].message.content
         

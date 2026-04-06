@@ -72,7 +72,7 @@ export default function UploadPage() {
         attempt++;
         if (attempt === maxRetries) {
           console.error(error);
-          alert("An error occurred during- `[x]` Correct AI Model Name in `backend/services/ai_service.py`\n- `[x]` Add `vercel.json` in root directory for routing\n- `[/]` Implement Retry Logic in `frontend/src/pages/UploadPage.tsx`erver)");
+          alert("Analysis failed. This can happen if the backend is still waking up (common on the free tier). Please wait a few seconds and try again.");
           setLoading(false);
         } else {
           // Wait 2 seconds before retrying

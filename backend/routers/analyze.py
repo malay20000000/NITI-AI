@@ -27,8 +27,10 @@ async def analyze_resume(request: Request, file: UploadFile = File(...), role: s
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        print(f"Server Error: {e}")
+        # Return the actual error message to help debugging
+        raise HTTPException(status_code=500, detail=f"Backend Error: {str(e)}")
+
 
 @router.get("/results/{id}")
 async def get_results(request: Request, id: str):

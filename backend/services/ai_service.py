@@ -7,6 +7,8 @@ client = OpenAI(
     api_key=settings.OPENAI_API_KEY
 ) if settings.OPENAI_API_KEY else None
 
+import re
+
 def evaluate_resume(resume_text: str, target_role: str) -> dict:
     if not client:
         # Fallback for dev without API key
@@ -61,13 +63,15 @@ def evaluate_resume(resume_text: str, target_role: str) -> dict:
         )
         content = response.choices[0].message.content
         
-        # Clean markdown wrappers if model outputs them
-        if "```json" in content:
-            content = content.split("```json")[1].split("```")[0].strip()
-        elif "```" in content:
-            content = content.split("```")[1].split("```")[0].strip()
+        # Robust JSON extraction using regex
+        json_match = re.search(r'\{.*\}', content, re.DOTALL)
+        if json_match:
+            content = json_match.group(0)
+        else:
+            raise ValueError(f"AI response did not contain valid JSON: {content[:100]}...")
             
         return json.loads(content)
     except Exception as e:
-        print(f"Error calling OpenRouter API: {e}")
-        raise ValueError("Failed to evaluate resume using AI.")
+        print(f"Analysis Error: {e}")
+        raise ValueError(f"Analysis failed: {str(e)}")
+

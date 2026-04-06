@@ -8,6 +8,7 @@ export default function UploadPage() {
   const [role, setRole] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("Processing AI Insights...");
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,11 +51,17 @@ export default function UploadPage() {
     formData.append("file", file);
     formData.append("role", role);
 
-    const maxRetries = 3;
+    const maxRetries = 6;
     let attempt = 0;
     let success = false;
 
     while (attempt < maxRetries && !success) {
+      if (attempt > 0) {
+        setStatusMessage(`Waking up server (Attempt ${attempt + 1}/${maxRetries})...`);
+      } else {
+        setStatusMessage("Analyzing Profile...");
+      }
+
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze/resume`, {
           method: "POST",
@@ -62,21 +69,22 @@ export default function UploadPage() {
         });
         
         if (!response.ok) {
-          throw new Error("Analysis failed");
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Analysis failed");
         }
         
         const data = await response.json();
         success = true;
         navigate(`/dashboard/${data.id}`);
-      } catch (error) {
+      } catch (error: any) {
         attempt++;
         if (attempt === maxRetries) {
           console.error(error);
-          alert("Analysis failed. This can happen if the backend is still waking up (common on the free tier). Please wait a few seconds and try again.");
+          alert(`Analysis failed: ${error.message}. (Note: On the free tier, the first try may take a minute to wake up the server. Please try again in 10 seconds)`);
           setLoading(false);
         } else {
-          // Wait 2 seconds before retrying
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          // Wait 5 seconds before retrying
+          await new Promise(resolve => setTimeout(resolve, 5000));
         }
       }
     }
@@ -155,7 +163,7 @@ export default function UploadPage() {
             {loading ? (
               <>
                 <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
-                Processing AI Insights...
+                {statusMessage}
               </>
             ) : "Analyze Profile"}
           </button>

@@ -50,22 +50,35 @@ export default function UploadPage() {
     formData.append("file", file);
     formData.append("role", role);
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze/resume`, {
-        method: "POST",
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error("Analysis failed");
+    const maxRetries = 3;
+    let attempt = 0;
+    let success = false;
+
+    while (attempt < maxRetries && !success) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze/resume`, {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          throw new Error("Analysis failed");
+        }
+        
+        const data = await response.json();
+        success = true;
+        navigate(`/dashboard/${data.id}`);
+      } catch (error) {
+        attempt++;
+        if (attempt === maxRetries) {
+          console.error(error);
+          alert("An error occurred during- `[x]` Correct AI Model Name in `backend/services/ai_service.py`\n- `[x]` Add `vercel.json` in root directory for routing\n- `[/]` Implement Retry Logic in `frontend/src/pages/UploadPage.tsx`erver)");
+          setLoading(false);
+        } else {
+          // Wait 2 seconds before retrying
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
       }
-      
-      const data = await response.json();
-      navigate(`/dashboard/${data.id}`);
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred during analysis. Make sure the backend is running and valid API keys are set.");
-      setLoading(false);
     }
   };
 

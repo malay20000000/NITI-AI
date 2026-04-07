@@ -22,8 +22,9 @@ async def startup_db_client():
 async def shutdown_db_client():
     app.mongodb_client.close()
 
-from routers import analyze
+from routers import analyze, auth
 app.include_router(analyze.router)
+app.include_router(auth.router)
 
 @app.get("/")
 async def root():

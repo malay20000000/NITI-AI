@@ -30,7 +30,11 @@ function App() {
           </nav>
           <main>
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={
+                 <div className="flex flex-col">
+                   <ProtectedRoute><LandingPage /></ProtectedRoute>
+                 </div>
+              } />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
               <Route path="/dashboard/:id" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />

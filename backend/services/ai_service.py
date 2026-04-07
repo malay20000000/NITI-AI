@@ -54,7 +54,7 @@ def evaluate_resume(resume_text: str, target_role: str) -> dict:
     
     try:
         response = client.chat.completions.create(
-            model="qwen/qwen3.6-plus:free",
+            model="google/gemini-2.0-flash-lite-preview-02-05:free",
             messages=[
                 {"role": "system", "content": "You output only structured JSON."},
                 {"role": "user", "content": prompt}

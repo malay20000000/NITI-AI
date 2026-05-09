@@ -4,6 +4,7 @@ import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Target, TrendingUp, Cale
 
 export default function DashboardPage() {
   const { id } = useParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -152,7 +153,7 @@ export default function DashboardPage() {
       <div className="bg-slate-900 text-white p-8 md:p-12 rounded-3xl shadow-2xl">
         <h3 className="text-3xl font-extrabold mb-10 flex items-center"><Calendar className="w-8 h-8 mr-3 text-blue-400" /> Your Career Roadmap</h3>
         <div className="grid md:grid-cols-3 gap-8">
-          {Object.entries(eval_data.roadmap || {}).map(([period, tasks]: [string, any], index) => (
+          {Object.entries(eval_data.roadmap || {}).map(([period, tasks]: [string, string[]], index) => (
              <div key={period} className="relative group">
                 {index !== 2 && <div className="hidden md:block absolute top-8 -right-4 w-8 border-t-2 border-dashed border-slate-700"></div>}
                 <div className="text-sm font-black tracking-widest text-blue-400 uppercase mb-4 pl-1">{period}</div>

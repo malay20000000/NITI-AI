@@ -76,11 +76,12 @@ export default function UploadPage() {
         const data = await response.json();
         success = true;
         navigate(`/dashboard/${data.id}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         attempt++;
         if (attempt === maxRetries) {
           console.error(error);
-          alert(`Analysis failed: ${error.message}. (Note: On the free tier, the first try may take a minute to wake up the server. Please try again in 10 seconds)`);
+          const errMessage = error instanceof Error ? error.message : "Unknown error";
+          alert(`Analysis failed: ${errMessage}. (Note: On the free tier, the first try may take a minute to wake up the server. Please try again in 10 seconds)`);
           setLoading(false);
         } else {
           // Wait 5 seconds before retrying

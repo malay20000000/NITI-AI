@@ -22,12 +22,8 @@ async def startup_db_client():
 async def shutdown_db_client():
     app.mongodb_client.close()
 
-# Import routers explicitly to avoid namespace issues
-from routers.analyze import router as analyze_router
-from routers.auth import router as auth_router
-
-app.include_router(analyze_router)
-app.include_router(auth_router)
+from routers import analyze
+app.include_router(analyze.router)
 
 @app.get("/")
 async def root():

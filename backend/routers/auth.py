@@ -28,8 +28,7 @@ async def signup(request: Request, user: UserSignup):
     
     # Create user
     user_dict = user.dict()
-    password = user_dict.pop("password")
-    user_dict["hashed_password"] = get_password_hash(password)
+    user_dict["hashed_password"] = get_password_hash(user.pop("password"))
     user_dict["is_active"] = True
     user_dict["created_at"] = datetime.utcnow()
     
